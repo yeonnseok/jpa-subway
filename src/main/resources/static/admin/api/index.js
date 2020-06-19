@@ -64,7 +64,7 @@ const api = (() => {
       return request(`/lines/${lineId}/stations`, METHOD.POST(lineStationCreateRequestView))
     },
     create(data) {
-      return requestWithJsonData(`/lines`, METHOD.POST(data))
+      return request(`/lines`, METHOD.POST(data))
     },
     update(id, data) {
       return request(`/lines/${id}`, METHOD.PUT(data))

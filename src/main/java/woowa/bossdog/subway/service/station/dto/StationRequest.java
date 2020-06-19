@@ -14,7 +14,7 @@ public class StationRequest {
         this.name = name;
     }
 
-    public static StationRequest from(final Station station) {
-        return new StationRequest(station.getName());
+    public Station toStation() {
+        return new Station(name);
     }
 }

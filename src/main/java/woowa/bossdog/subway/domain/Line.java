@@ -3,6 +3,7 @@ package woowa.bossdog.subway.domain;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import woowa.bossdog.subway.service.line.dto.UpdateLineRequest;
 
 import javax.persistence.*;
 import java.time.LocalTime;
@@ -28,9 +29,21 @@ public class Line extends BaseEntity {
 
 
     public Line(final String name, final LocalTime startTime, final LocalTime endTime, final int intervalTime) {
+        this(null, name, startTime, endTime, intervalTime);
+    }
+
+    public Line(final Long id, final String name, final LocalTime startTime, final LocalTime endTime, final int intervalTime) {
+        this.id = id;
         this.name = name;
         this.startTime = startTime;
         this.endTime = endTime;
         this.intervalTime = intervalTime;
+    }
+
+    public void update(final UpdateLineRequest request) {
+        this.name = request.getName();
+        this.startTime = request.getStartTime();
+        this.endTime = request.getEndTime();
+        this.intervalTime = request.getIntervalTime();
     }
 }
