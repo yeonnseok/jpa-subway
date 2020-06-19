@@ -22,11 +22,11 @@ public class Favorite {
     private Member member;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "station_id")
+    @JoinColumn(name = "source_station_id")
     private Station sourceStation;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "station_id")
+    @JoinColumn(name = "target_station_id")
     private Station targetStation;
 
     public Favorite(final Member member, final Station sourceStation, final Station targetStation) {

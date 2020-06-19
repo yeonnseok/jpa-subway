@@ -23,7 +23,7 @@ public class LineStation extends BaseEntity {
     private Line line;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "station_id")
+    @JoinColumn(name = "pre_station_id")
     private Station preStation;
 
     @ManyToOne(fetch = LAZY)
