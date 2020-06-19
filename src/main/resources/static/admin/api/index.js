@@ -40,7 +40,7 @@ const api = (() => {
       return requestWithJsonData(`/stations`)
     },
     create(data) {
-      return requestWithJsonData(`/stations`, METHOD.POST(data))
+      return request(`/stations`, METHOD.POST(data))
     },
     update(data, id) {
       return requestWithJsonData(`/stations/${id}`, METHOD.PUT(data))
