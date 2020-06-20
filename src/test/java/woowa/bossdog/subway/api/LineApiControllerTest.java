@@ -1,5 +1,6 @@
 package woowa.bossdog.subway.api;
 
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,8 +14,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import woowa.bossdog.subway.domain.Line;
+import woowa.bossdog.subway.domain.Station;
 import woowa.bossdog.subway.service.line.LineService;
+import woowa.bossdog.subway.service.line.dto.LineDetailResponse;
 import woowa.bossdog.subway.service.line.dto.LineResponse;
+import woowa.bossdog.subway.service.line.dto.WholeSubwayResponse;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -26,8 +30,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -131,5 +134,76 @@ class LineApiControllerTest {
         verify(lineService).deleteLine(eq(63L));
     }
 
+    @DisplayName("지하철 구간 추가")
+    @Test
+    void addLineStation() throws Exception {
+        // given
+        Line line = new Line(10L, "2호선", LocalTime.of(5, 30), LocalTime.of(23, 30), 10);
 
+        // when
+        mvc.perform(post("/lines/" + line.getId() + "/stations")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"preStationId\":5,\"stationId\":8,\"distance\":10,\"duration\":10}"))
+                .andExpect(status().isOk());
+
+        // then
+        verify(lineService).addLineStation(eq(10L), any());
+    }
+
+    @DisplayName("지하철 구간 삭제")
+    @Test
+    void removeLineStation() throws Exception {
+        // given
+        Line line = new Line(10L, "2호선", LocalTime.of(5, 30), LocalTime.of(23, 30), 10);
+        Station station = new Station(5L, "강남역");
+
+        // when
+        mvc.perform(delete("/lines/" + line.getId() + "/stations/" + station.getId()))
+                .andExpect(status().isOk());
+        // then
+        verify(lineService).deleteLineStation(eq(10L), eq(5L));
+    }
+
+    @DisplayName("노선과 구간 조회")
+    @Test
+    void findLineDetail() throws Exception {
+        // given
+        List<Station> stations = Lists.newArrayList(new Station(1L, "교대역"), new Station(2L, "고터역"));
+        Line line = new Line(2L, "3호선", LocalTime.of(6,30), LocalTime.of(23,0), 10);
+        LineDetailResponse response = LineDetailResponse.of(line, stations);
+        given(lineService.findLineDetail(any())).willReturn(response);
+
+        // when
+        mvc.perform(get("/lines/" + line.getId() + "/stations"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("{\"id\":2,\"name\":\"3호선\",\"startTime\":\"06:30:00\","
+                        +"\"endTime\":\"23:00:00\",\"intervalTime\":10,\"stations\":[{\"id\":1,\"name\":\"교대역\"},"
+                        +"{\"id\":2,\"name\":\"고터역\"}]}"));
+
+        // then
+        verify(lineService).findLineDetail(eq(2L));
+    }
+
+    @DisplayName("전체 노선과 구간 조회")
+    @Test
+    void listLineDetail() throws Exception {
+        // given
+        List<Station> stations = Lists.newArrayList(new Station(1L, "교대역"), new Station(2L, "고터역"));
+        Line line = new Line(2L, "3호선", LocalTime.of(6,30), LocalTime.of(23,0), 10);
+
+        final List<LineDetailResponse> lineDetailResponses = Lists.newArrayList(LineDetailResponse.of(line, stations));
+        WholeSubwayResponse response = new WholeSubwayResponse(lineDetailResponses);
+        given(lineService.listLineDetail()).willReturn(response);
+
+        // when
+        mvc.perform(get("/lines/detail"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("{\"lineDetailResponse\":[{\"id\":2,\"name\":\"3호선\","
+                        + "\"startTime\":\"06:30:00\",\"endTime\":\"23:00:00\",\"intervalTime\":10,"
+                        + "\"stations\":[{\"id\":1,\"name\":\"교대역\"},{\"id\":2,\"name\":\"고터역\"}]}]}"));
+
+        // then
+        verify(lineService).listLineDetail();
+    }
 }

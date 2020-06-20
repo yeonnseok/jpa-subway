@@ -83,15 +83,15 @@ function AdminEdge() {
       .catch(error => alert(ERROR_MESSAGE));
   };
 
-  const initCreateEdgeForm = event => {
+  const initCreateEdgeForm = async event => {
     event.preventDefault();
-    initPreviousStationOptions();
-    initNextStationOptions();
-    initLineOptions(subwayLines);
+    await initLineOptions(subwayLines);
+    await initPreviousStationOptions();
+    await initNextStationOptions();
   };
 
   const initPreviousStationOptions = () => {
-    api.line.get($lineSelectOptions.value).then(data => {
+    api.line.getDetail($lineSelectOptions.value).then(data => {
       const stations = data.stations ? data.stations : [];
       if (stations.length > 0) {
         const $stationSelectOption = document.querySelector(

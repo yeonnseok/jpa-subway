@@ -4,40 +4,47 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Embeddable;
+import java.util.Objects;
 
-import static javax.persistence.FetchType.LAZY;
-
-@Entity
+@Embeddable
 @Getter
-@Table(name = "line_station")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class LineStation extends BaseEntity {
+public class LineStation {
 
-    @Id @GeneratedValue
-    @Column(name = "line_station_id")
-    private Long id;
-
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "line_id")
-    private Line line;
-
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "pre_station_id")
-    private Station preStation;
-
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "station_id")
-    private Station station;
+    private Long preStationId;
+    private Long stationId;
     private int distance;
     private int duration;
 
-    public LineStation(final Line line, final Station preStation, final Station station, final int distance, final int duration) {
-        this.line = line;
-        this.preStation = preStation;
-        this.station = station;
+    public LineStation(final Long preStationId, final Long stationId, final int distance, final int duration) {
+        this.preStationId = preStationId;
+        this.stationId = stationId;
         this.distance = distance;
         this.duration = duration;
     }
 
+    public void updatePreStation(final Long stationId) {
+        this.preStationId = stationId;
+    }
+
+    public boolean isStart() {
+        return preStationId == null;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final LineStation that = (LineStation) o;
+        return getDistance() == that.getDistance() &&
+                getDuration() == that.getDuration() &&
+                Objects.equals(getPreStationId(), that.getPreStationId()) &&
+                Objects.equals(getStationId(), that.getStationId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getPreStationId(), getStationId(), getDistance(), getDuration());
+    }
 }

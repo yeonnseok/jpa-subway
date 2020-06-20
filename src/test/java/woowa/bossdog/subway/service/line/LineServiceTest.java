@@ -7,10 +7,12 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import woowa.bossdog.subway.domain.Line;
+import woowa.bossdog.subway.domain.LineStation;
+import woowa.bossdog.subway.domain.Station;
 import woowa.bossdog.subway.repository.LineRepository;
-import woowa.bossdog.subway.service.line.dto.LineRequest;
-import woowa.bossdog.subway.service.line.dto.LineResponse;
-import woowa.bossdog.subway.service.line.dto.UpdateLineRequest;
+import woowa.bossdog.subway.repository.StationRepository;
+import woowa.bossdog.subway.service.line.dto.*;
+import woowa.bossdog.subway.service.station.dto.StationResponse;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -32,11 +34,14 @@ class LineServiceTest {
     @Mock
     private LineRepository lineRepository;
 
+    @Mock
+    private StationRepository stationRepository;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        lineService = new LineService(lineRepository);
+        lineService = new LineService(lineRepository, stationRepository);
     }
 
     @DisplayName("지하철 노선 추가")
@@ -128,4 +133,97 @@ class LineServiceTest {
         verify(lineRepository).deleteById(eq(1L));
     }
 
+    @DisplayName("첫번째 구간 추가")
+    @Test
+    void addFirstLineStation() {
+        // given
+        Line line = new Line(63L, "2호선", LocalTime.of(5, 30), LocalTime.of(23, 30), 10);
+        Station station = new Station(8L, "강남역");
+
+        given(lineRepository.findById(any())).willReturn(Optional.of(line));
+        given(stationRepository.findById(eq(8L))).willReturn(Optional.of(station));
+
+        // when
+        LineStationRequest lineStationRequest = new LineStationRequest(null, station.getId(), 10, 10);
+        lineService.addLineStation(line.getId(), lineStationRequest);
+        final LineDetailResponse findDetailLine = lineService.findLineDetail(line.getId());
+
+        final List<StationResponse> responses = findDetailLine.getStations();
+
+        // then
+        assertThat(responses).isNotNull().hasSize(1);
+        assertThat(responses.get(0).getId()).isEqualTo(8L);
+        assertThat(responses.get(0).getName()).isEqualTo("강남역");
+    }
+
+    @DisplayName("구간 삭제")
+    @Test
+    void deleteLineStation() {
+        // given
+        Line line = new Line(63L, "2호선", LocalTime.of(5, 30), LocalTime.of(23, 30), 10);
+        line.getLineStations().add(new LineStation(null, 1L, 10, 10));
+        line.getLineStations().add(new LineStation(1L, 2L, 10, 10));
+        line.getLineStations().add(new LineStation(2L, 3L, 10, 10));
+
+        Station station = new Station(2L, "강남역");
+        given(lineRepository.findById(any())).willReturn(Optional.of(line));
+
+        // when
+        lineService.deleteLineStation(line.getId(), station.getId());
+
+        // then
+        assertThat(line.getLineStations().get(1).getPreStationId()).isEqualTo(1L);
+        assertThat(line.getLineStations().get(1).getStationId()).isEqualTo(3L);
+    }
+
+    @DisplayName("노선과 구간 단건 조회")
+    @Test
+    void findLineDetail() {
+        // given
+        final Line line = new Line(63L, "2호선", LocalTime.of(5, 30), LocalTime.of(23, 30), 10);
+        final Station 강남역 = new Station(30L, "강남역");
+        final Station 역삼역 = new Station(33L, "역삼역");
+
+        line.getLineStations().add(new LineStation(null, 30L, 10, 10));
+        line.getLineStations().add(new LineStation(30L, 33L, 10, 10));
+
+        given(lineRepository.findById(any())).willReturn(Optional.of(line));
+        given(stationRepository.findById(eq(30L))).willReturn(Optional.of(강남역));
+        given(stationRepository.findById(eq(33L))).willReturn(Optional.of(역삼역));
+
+        // when
+        final LineDetailResponse response = lineService.findLineDetail(line.getId());
+
+        // then
+        verify(lineRepository).findById(eq(63L));
+        assertThat(response.getStations().get(0).getName()).isEqualTo("강남역");
+        assertThat(response.getStations().get(1).getName()).isEqualTo("역삼역");
+    }
+
+    @DisplayName("전체 노선과 구간 조회")
+    @Test
+    void listLineDetail() {
+        // given
+        final Line line = new Line(63L, "2호선", LocalTime.of(5, 30), LocalTime.of(23, 30), 10);
+        final Station 강남역 = new Station(30L, "강남역");
+        final Station 역삼역 = new Station(33L, "역삼역");
+
+        line.getLineStations().add(new LineStation(null, 30L, 10, 10));
+        line.getLineStations().add(new LineStation(30L, 33L, 10, 10));
+        List<Line> lines = new ArrayList<>();
+        lines.add(line);
+
+        given(lineRepository.findAll()).willReturn(lines);
+        given(lineRepository.findById(eq(63L))).willReturn(Optional.of(line));
+        given(stationRepository.findById(eq(30L))).willReturn(Optional.of(강남역));
+        given(stationRepository.findById(eq(33L))).willReturn(Optional.of(역삼역));
+
+        // when
+        final WholeSubwayResponse response = lineService.listLineDetail();
+
+        // then
+        verify(lineRepository).findById(eq(63L));
+        assertThat(response.getLineDetailResponse().get(0).getStations().get(0).getName()).isEqualTo("강남역");
+        assertThat(response.getLineDetailResponse().get(0).getStations().get(1).getName()).isEqualTo("역삼역");
+    }
 }

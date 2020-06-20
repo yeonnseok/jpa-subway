@@ -57,6 +57,9 @@ const api = (() => {
     getAll() {
       return requestWithJsonData(`/lines`)
     },
+    getDetail(id) {
+      return requestWithJsonData(`/lines/${id}/stations`)
+    },
     getAllDetail() {
       return requestWithJsonData(`/lines/detail`)
     },

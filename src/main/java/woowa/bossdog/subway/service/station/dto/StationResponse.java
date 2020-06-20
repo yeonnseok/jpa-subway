@@ -5,6 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import woowa.bossdog.subway.domain.Station;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class StationResponse {
@@ -20,4 +23,9 @@ public class StationResponse {
         return new StationResponse(station.getId(), station.getName());
     }
 
+    public static List<StationResponse> listFrom(final List<Station> stations) {
+        return stations.stream()
+                .map(StationResponse::from)
+                .collect(Collectors.toList());
+    }
 }
