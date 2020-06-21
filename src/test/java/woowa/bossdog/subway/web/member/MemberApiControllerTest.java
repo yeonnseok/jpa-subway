@@ -1,4 +1,4 @@
-package woowa.bossdog.subway.web.api;
+package woowa.bossdog.subway.web.member;
 
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,4 +1,4 @@
-package woowa.bossdog.subway.web.api;
+package woowa.bossdog.subway.web.station;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

@@ -1,4 +1,4 @@
-package woowa.bossdog.subway.web.api;
+package woowa.bossdog.subway.web.path;
 
 import com.google.common.collect.Lists;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,7 +1,11 @@
 package woowa.bossdog.subway.service.favorite;
 
-public class ExistedFavoriteException extends RuntimeException {
+import woowa.bossdog.subway.web.advice.exception.BadRequestForResourcesException;
+
+public class ExistedFavoriteException extends BadRequestForResourcesException {
+    private static final String ERROR_CODE = "EXISTED_FAVORITE";
+
     public ExistedFavoriteException() {
-        super("이미 등록된 즐겨찾기 경로입니다.");
+        super(ERROR_CODE, "이미 등록된 즐겨찾기 경로입니다.");
     }
 }

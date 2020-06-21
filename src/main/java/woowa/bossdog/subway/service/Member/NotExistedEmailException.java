@@ -1,7 +1,11 @@
 package woowa.bossdog.subway.service.Member;
 
-public class NotExistedEmailException extends RuntimeException {
+import woowa.bossdog.subway.web.advice.exception.ResourcesNotFoundException;
+
+public class NotExistedEmailException extends ResourcesNotFoundException {
+    private static final String ERROR_CODE = "NOT_EXISTED_EMAIL";
+
     public NotExistedEmailException() {
-        super("등록되지 않은 이메일입니다.");
+        super(ERROR_CODE, "등록되지 않은 이메일입니다.");
     }
 }
