@@ -50,6 +50,4 @@ class LineTest {
         assertThat(stationIds.get(2)).isEqualTo(6L);
     }
 
-
-
 }

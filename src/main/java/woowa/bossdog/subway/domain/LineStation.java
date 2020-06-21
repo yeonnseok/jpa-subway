@@ -47,4 +47,11 @@ public class LineStation {
     public int hashCode() {
         return Objects.hash(getPreStationId(), getStationId(), getDistance(), getDuration());
     }
+
+    @Override
+    public String toString() {
+        return "LineStation{" +
+                "preStationId=" + preStationId +
+                ", stationId=" + stationId + "}";
+    }
 }

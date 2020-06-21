@@ -22,7 +22,7 @@ class StationRepositoryTest {
     @Test
     void save_find() {
         // given
-        final Station station = new Station("강남역");
+        final Station station = new Station("낙성대역");
         stationRepository.save(station);
 
         // when
