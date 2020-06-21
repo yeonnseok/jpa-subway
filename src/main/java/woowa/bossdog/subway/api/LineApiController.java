@@ -49,9 +49,6 @@ public class LineApiController {
         return ResponseEntity.noContent().build();
     }
 
-    /*
-    구간 추가
-     */
     @PostMapping("/{id}/stations")
     public ResponseEntity<Void> addLineStation(
             @PathVariable("id") Long id,
@@ -61,9 +58,6 @@ public class LineApiController {
         return ResponseEntity.ok().build();
     }
 
-    /*
-    구간 삭제
-     */
     @DeleteMapping("/{id}/stations/{stationId}")
     public ResponseEntity<Void> deleteLineStation(
             @PathVariable("id") Long id,
@@ -73,9 +67,6 @@ public class LineApiController {
         return ResponseEntity.ok().build();
     }
 
-    /*
-    구간 포함 디테일 노선
-     */
     @GetMapping("/{id}/stations")
     public ResponseEntity<LineDetailResponse> findLineDetail(
         @PathVariable("id") Long id
@@ -84,9 +75,6 @@ public class LineApiController {
         return ResponseEntity.ok().body(response);
     }
 
-    /*
-    모든 구간 포함 전체 노선
-     */
     @GetMapping("/detail")
     public ResponseEntity<WholeSubwayResponse> listLineDetail() {
         WholeSubwayResponse response = lineService.listLineDetail();

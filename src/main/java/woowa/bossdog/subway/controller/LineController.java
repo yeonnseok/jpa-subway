@@ -5,17 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class AdminPageController {
-
-    @GetMapping(value = "/", produces = MediaType.TEXT_HTML_VALUE)
-    public String index() {
-        return "admin/index";
-    }
-
-    @GetMapping(value = "/stations", produces = MediaType.TEXT_HTML_VALUE)
-    public String stationPage() {
-        return "admin/admin-station";
-    }
+public class LineController {
 
     @GetMapping(value = "/lines", produces = MediaType.TEXT_HTML_VALUE)
     public String linePage() {

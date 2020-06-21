@@ -7,9 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import woowa.bossdog.subway.service.line.dto.LineRequest;
-import woowa.bossdog.subway.service.line.dto.LineResponse;
-import woowa.bossdog.subway.service.line.dto.UpdateLineRequest;
+import woowa.bossdog.subway.service.line.dto.*;
 import woowa.bossdog.subway.service.station.dto.StationResponse;
 
 import javax.transaction.Transactional;
@@ -154,6 +152,45 @@ public class AcceptanceTest {
         then().
                 log().all().
                 statusCode(HttpStatus.NO_CONTENT.value());
+        // @formatter:on
+    }
+
+    void addLineStation(final Long lineId, final Long preStationId, final Long stationId, final int distance, final int duration) {
+        LineStationRequest request = new LineStationRequest(preStationId, stationId, distance, duration);
+
+        // @formatter:off
+        given().
+                body(request).
+                contentType(MediaType.APPLICATION_JSON_VALUE).
+                accept(MediaType.APPLICATION_JSON_VALUE).
+                when().
+                post("/lines/" + lineId + "/stations").
+                then().
+                log().all().
+                statusCode(HttpStatus.OK.value());
+        // @formatter:on
+    }
+
+    void removeLineStation(final Long lineId, final Long stationId) {
+        // @formatter:off
+        given().
+        when().
+                delete("/lines/" + lineId + "/stations/" + stationId).
+        then().
+                log().all().
+                statusCode(HttpStatus.OK.value());
+        // @formatter:on
+    }
+
+    LineDetailResponse findLineWithStations(final Long lineId) {
+        // @formatter:off
+        return given().
+                when().
+                        get("/lines/" + lineId + "/stations").
+                then().
+                        log().all().
+                        statusCode(HttpStatus.OK.value()).
+                        extract().as(LineDetailResponse.class);
         // @formatter:on
     }
 }
