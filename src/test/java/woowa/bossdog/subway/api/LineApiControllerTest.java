@@ -145,7 +145,7 @@ class LineApiControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"preStationId\":5,\"stationId\":8,\"distance\":10,\"duration\":10}"))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
 
         // then
         verify(lineService).addLineStation(eq(10L), any());
@@ -160,7 +160,7 @@ class LineApiControllerTest {
 
         // when
         mvc.perform(delete("/lines/" + line.getId() + "/stations/" + station.getId()))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
         // then
         verify(lineService).deleteLineStation(eq(10L), eq(5L));
     }

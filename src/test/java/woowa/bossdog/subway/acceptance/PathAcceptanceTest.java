@@ -96,7 +96,6 @@ public class PathAcceptanceTest extends AcceptanceTest {
 
     private PathResponse findPath(final String source, final String target, final PathType type) {
         PathRequest request = new PathRequest(source, target, type);
-
         // @formatter:off
         return given().
                         body(request).

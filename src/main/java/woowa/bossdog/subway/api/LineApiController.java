@@ -55,7 +55,7 @@ public class LineApiController {
             @RequestBody LineStationRequest request
     ) {
         lineService.addLineStation(id, request);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.created(URI.create("/lines/" + id + "/stations/" + request.getStationId())).build();
     }
 
     @DeleteMapping("/{id}/stations/{stationId}")
@@ -64,7 +64,7 @@ public class LineApiController {
             @PathVariable("stationId") Long stationId
     ) {
         lineService.deleteLineStation(id, stationId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}/stations")

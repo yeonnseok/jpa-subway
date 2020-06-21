@@ -3,6 +3,7 @@ package woowa.bossdog.subway.domain;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import woowa.bossdog.subway.service.Member.dto.UpdateMemberRequest;
 
 import javax.persistence.*;
 
@@ -19,8 +20,18 @@ public class Member extends BaseEntity {
     private String password;
 
     public Member(final String email, final String name, final String password) {
+        this(null, email, name, password);
+    }
+
+    public Member(final Long id, final String email, final String name, final String password) {
+        this.id = id;
         this.email = email;
         this.name = name;
         this.password = password;
+    }
+
+    public void update(final UpdateMemberRequest request) {
+        this.name = request.getName();
+        this.password = request.getPassword();
     }
 }
