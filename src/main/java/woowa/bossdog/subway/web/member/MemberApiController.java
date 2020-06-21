@@ -1,4 +1,4 @@
-package woowa.bossdog.subway.api;
+package woowa.bossdog.subway.web.member;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

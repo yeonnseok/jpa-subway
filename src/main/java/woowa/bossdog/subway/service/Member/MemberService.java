@@ -46,4 +46,8 @@ public class MemberService {
     public void deleteMember(final Long id) {
         memberRepository.deleteById(id);
     }
+
+    public Member findMemberByEmail(final String email) {
+        return memberRepository.findByEmail(email);
+    }
 }
