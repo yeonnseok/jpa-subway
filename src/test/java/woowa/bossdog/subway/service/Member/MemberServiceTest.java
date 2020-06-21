@@ -132,7 +132,7 @@ class MemberServiceTest {
     void findMemberByEmail() {
         // given
         final Member member = new Member(111L, "test@test.com", "bossdog", "test");
-        given(memberRepository.findByEmail(any())).willReturn(member);
+        given(memberRepository.findByEmail(any())).willReturn(Optional.of(member));
 
         // when
         final Member findMember = memberService.findMemberByEmail(member.getEmail());
@@ -149,7 +149,7 @@ class MemberServiceTest {
     @Test
     void loginFail() {
         final Member member = new Member(111L, "test@test.com", "bossdog", "test");
-        given(memberRepository.findByEmail(any())).willReturn(member);
+        given(memberRepository.findByEmail(any())).willReturn(Optional.of(member));
 
         assertThatThrownBy(() -> {
             LoginRequest request = new LoginRequest("test@test.com", "wrong");
@@ -162,7 +162,7 @@ class MemberServiceTest {
     void createToken() {
         // given
         final Member member = new Member(111L, "test@test.com", "bossdog", "test");
-        given(memberRepository.findByEmail(any())).willReturn(member);
+        given(memberRepository.findByEmail(any())).willReturn(Optional.of(member));
         given(jwtTokenProvider.createToken(any())).willReturn("ACCESS_TOKEN");
 
         // when

@@ -7,7 +7,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import woowa.bossdog.subway.service.line.dto.*;
+import woowa.bossdog.subway.service.Member.dto.MemberResponse;
+import woowa.bossdog.subway.service.Member.dto.UpdateMemberRequest;
+import woowa.bossdog.subway.service.line.dto.LineDetailResponse;
+import woowa.bossdog.subway.service.line.dto.LineResponse;
+import woowa.bossdog.subway.service.line.dto.UpdateLineRequest;
 import woowa.bossdog.subway.service.station.dto.StationResponse;
 
 import javax.transaction.Transactional;
@@ -98,6 +102,35 @@ public class AcceptanceTest {
 
     LineDetailResponse findLineWithStations(final Long lineId) {
         return getOne("/lines/" + lineId + "/stations", LineDetailResponse.class);
+    }
+
+
+    void createMember(final String email, final String name, final String password) {
+        final Map<String, String> params = new HashMap<>();
+        params.put("email", email);
+        params.put("name", name);
+        params.put("password", password);
+
+        post("/members", params);
+    }
+
+    List<MemberResponse> listMembers() {
+        return getAll("/members", MemberResponse.class);
+    }
+
+    MemberResponse findMember(final Long id) {
+        return getOne("/members/" + id, MemberResponse.class);
+    }
+
+    void updateMember(final Long id, UpdateMemberRequest request) {
+        final Map<String, String> params = new HashMap<>();
+        params.put("name", request.getName());
+        params.put("password", request.getPassword());
+        put("/members/" + id, params);
+    }
+
+    void deleteMember(final Long id) {
+        delete("/members/" + id);
     }
 
     protected <T> void post(String path, Map<String, String> params) {

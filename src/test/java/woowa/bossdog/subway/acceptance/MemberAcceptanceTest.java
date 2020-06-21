@@ -5,9 +5,7 @@ import org.junit.jupiter.api.Test;
 import woowa.bossdog.subway.service.Member.dto.MemberResponse;
 import woowa.bossdog.subway.service.Member.dto.UpdateMemberRequest;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -56,33 +54,5 @@ public class MemberAcceptanceTest extends AcceptanceTest {
 
         // 6. 데이터 롤백
         deleteMember(responses.get(0).getId());
-    }
-
-    private void createMember(final String email, final String name, final String password) {
-        final Map<String, String> params = new HashMap<>();
-        params.put("email", email);
-        params.put("name", name);
-        params.put("password", password);
-
-        post("/members", params);
-    }
-
-    private List<MemberResponse> listMembers() {
-        return getAll("/members", MemberResponse.class);
-    }
-
-    private MemberResponse findMember(final Long id) {
-        return getOne("/members/" + id, MemberResponse.class);
-    }
-
-    private void updateMember(final Long id, UpdateMemberRequest request) {
-        final Map<String, String> params = new HashMap<>();
-        params.put("name", request.getName());
-        params.put("password", request.getPassword());
-        put("/members/" + id, params);
-    }
-
-    private void deleteMember(final Long id) {
-        delete("/members/" + id);
     }
 }

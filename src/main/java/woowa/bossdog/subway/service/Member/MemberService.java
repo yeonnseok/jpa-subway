@@ -48,7 +48,8 @@ public class MemberService {
     }
 
     public Member findMemberByEmail(final String email) {
-        return memberRepository.findByEmail(email);
+        return memberRepository.findByEmail(email)
+                .orElseThrow(NotExistedEmailException::new);
     }
 
     public String createToken(final LoginRequest request) {
