@@ -7,7 +7,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import woowa.bossdog.subway.service.Member.dto.LoginRequest;
 import woowa.bossdog.subway.service.Member.dto.MemberResponse;
+import woowa.bossdog.subway.service.Member.dto.TokenResponse;
 import woowa.bossdog.subway.service.Member.dto.UpdateMemberRequest;
 import woowa.bossdog.subway.service.line.dto.LineDetailResponse;
 import woowa.bossdog.subway.service.line.dto.LineResponse;
@@ -131,6 +133,23 @@ public class AcceptanceTest {
 
     void deleteMember(final Long id) {
         delete("/members/" + id);
+    }
+
+    TokenResponse loginMember(final String email, final String password) {
+        final LoginRequest request = new LoginRequest(email, password);
+
+        // @formatter : off
+        return given().
+                        accept(MediaType.APPLICATION_JSON_VALUE).
+                        contentType(MediaType.APPLICATION_JSON_VALUE).
+                        body(request).
+                when().
+                        post("/me/login").
+                then().
+                        log().all().
+                        statusCode(HttpStatus.OK.value()).
+                        extract().as(TokenResponse.class);
+        // @formatter : on
     }
 
     protected <T> void post(String path, Map<String, String> params) {

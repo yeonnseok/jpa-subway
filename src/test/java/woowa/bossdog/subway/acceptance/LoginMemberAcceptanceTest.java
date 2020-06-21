@@ -4,7 +4,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import woowa.bossdog.subway.service.Member.dto.LoginRequest;
 import woowa.bossdog.subway.service.Member.dto.MemberResponse;
 import woowa.bossdog.subway.service.Member.dto.TokenResponse;
 import woowa.bossdog.subway.service.Member.dto.UpdateMemberRequest;
@@ -48,29 +47,12 @@ public class LoginMemberAcceptanceTest extends AcceptanceTest {
         assertThat(members).hasSize(0);
     }
 
-    private TokenResponse loginMember(final String email, final String password) {
-        final LoginRequest request = new LoginRequest(email, password);
-
-        // @formatter : off
-        return given().
-                        accept(MediaType.APPLICATION_JSON_VALUE).
-                        contentType(MediaType.APPLICATION_JSON_VALUE).
-                        body(request).
-                when().
-                        post("/me/login").
-                then().
-                        log().all().
-                        statusCode(HttpStatus.OK.value()).
-                        extract().as(TokenResponse.class);
-        // @formatter : on
-    }
-
     private MemberResponse getLoginMember(final String accessToken) {
         // @formatter : off
         return given().
                         accept(MediaType.APPLICATION_JSON_VALUE).
                         contentType(MediaType.APPLICATION_JSON_VALUE).
-                        header("Authorization", "Bearer" + accessToken).
+                        header("Authorization", "Bearer " + accessToken).
                 when().
                         get("/me").
                 then().
@@ -85,7 +67,7 @@ public class LoginMemberAcceptanceTest extends AcceptanceTest {
         given().
                 accept(MediaType.APPLICATION_JSON_VALUE).
                 contentType(MediaType.APPLICATION_JSON_VALUE).
-                header("Authorization", "Bearer" + accessToken).
+                header("Authorization", "Bearer " + accessToken).
                 body(request).
         when().
                 put("/me").
@@ -100,7 +82,7 @@ public class LoginMemberAcceptanceTest extends AcceptanceTest {
         given().
                 accept(MediaType.APPLICATION_JSON_VALUE).
                 contentType(MediaType.APPLICATION_JSON_VALUE).
-                header("Authorization", "Bearer" + accessToken).
+                header("Authorization", "Bearer " + accessToken).
         when().
                 delete("/me").
         then().

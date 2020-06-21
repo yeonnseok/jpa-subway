@@ -30,6 +30,11 @@ public class Favorite {
     private Station targetStation;
 
     public Favorite(final Member member, final Station sourceStation, final Station targetStation) {
+       this(null, member, sourceStation, targetStation);
+    }
+
+    public Favorite(final Long id, final Member member, final Station sourceStation, final Station targetStation) {
+        this.id = id;
         this.member = member;
         this.sourceStation = sourceStation;
         this.targetStation = targetStation;

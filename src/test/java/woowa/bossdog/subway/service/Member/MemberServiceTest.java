@@ -9,6 +9,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import woowa.bossdog.subway.domain.Member;
 import woowa.bossdog.subway.infra.JwtTokenProvider;
+import woowa.bossdog.subway.repository.FavoriteRepository;
 import woowa.bossdog.subway.repository.MemberRepository;
 import woowa.bossdog.subway.service.Member.dto.LoginRequest;
 import woowa.bossdog.subway.service.Member.dto.MemberRequest;
@@ -34,6 +35,7 @@ class MemberServiceTest {
     @Mock private MemberRepository memberRepository;
 
     @Mock private JwtTokenProvider jwtTokenProvider;
+    @Mock private FavoriteRepository favoriteRepository;
 
     @BeforeEach
     void setUp() {

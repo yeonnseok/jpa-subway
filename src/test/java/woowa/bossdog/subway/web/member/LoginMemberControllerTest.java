@@ -32,15 +32,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class LoginMemberControllerTest {
 
-    @Autowired
-    private MockMvc mvc;
-    @Autowired
-    private WebApplicationContext ctx;
+    @Autowired private MockMvc mvc;
+    @Autowired private WebApplicationContext ctx;
 
-    @MockBean
-    private MemberService memberService;
-    @MockBean
-    private JwtTokenProvider jwtTokenProvider;
+    @MockBean private MemberService memberService;
+    @MockBean private JwtTokenProvider jwtTokenProvider;
+
+    private Member member;
 
     @BeforeEach
     void setup() {
@@ -48,6 +46,10 @@ class LoginMemberControllerTest {
                 .addFilters(new CharacterEncodingFilter("UTF-8", true))
                 .alwaysDo(print())
                 .build();
+        member = member = new Member(111L, "test@test.com", "bossdog", "test");
+        given(memberService.findMemberByEmail(any())).willReturn(member);
+        given(jwtTokenProvider.validateToken(any())).willReturn(true);
+        given(jwtTokenProvider.getSubject(any())).willReturn(member.getEmail());
     }
 
     @DisplayName("로그인 실패 - 등록되지 않은 이메일")
@@ -101,11 +103,6 @@ class LoginMemberControllerTest {
     @Test
     void getLoginMember() throws Exception {
         // given
-        Member member = new Member(111L, "test@test.com", "bossdog", "test");
-        given(memberService.findMemberByEmail(any())).willReturn(member);
-        given(jwtTokenProvider.validateToken(any())).willReturn(true);
-        given(jwtTokenProvider.getSubject(any())).willReturn(member.getEmail());
-
         // when
         mvc.perform(get("/me")
                 .accept(MediaType.APPLICATION_JSON)
@@ -123,11 +120,7 @@ class LoginMemberControllerTest {
     @Test
     void updateLoginMember() throws Exception {
         // given
-        Member member = new Member(111L, "test@test.com", "bossdog", "test");
         UpdateMemberRequest request = new UpdateMemberRequest("changedName", "changedPassword");
-        given(memberService.findMemberByEmail(any())).willReturn(member);
-        given(jwtTokenProvider.validateToken(any())).willReturn(true);
-        given(jwtTokenProvider.getSubject(any())).willReturn(member.getEmail());
 
         // when
         mvc.perform(put("/me")
@@ -145,11 +138,6 @@ class LoginMemberControllerTest {
     @Test
     void deleteLoginMember() throws Exception {
         // given
-        Member member = new Member(111L, "test@test.com", "bossdog", "test");
-        given(memberService.findMemberByEmail(any())).willReturn(member);
-        given(jwtTokenProvider.validateToken(any())).willReturn(true);
-        given(jwtTokenProvider.getSubject(any())).willReturn(member.getEmail());
-
         // when
         mvc.perform(delete("/me")
                 .accept(MediaType.APPLICATION_JSON)
