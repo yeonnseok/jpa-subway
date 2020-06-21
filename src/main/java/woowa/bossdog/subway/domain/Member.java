@@ -34,4 +34,8 @@ public class Member extends BaseEntity {
         this.name = request.getName();
         this.password = request.getPassword();
     }
+
+    public boolean checkPassword(final String password) {
+        return this.password.equals(password);
+    }
 }

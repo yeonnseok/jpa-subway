@@ -1,4 +1,4 @@
-package woowa.bossdog.subway.controller;
+package woowa.bossdog.subway.web;
 
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -45,5 +45,10 @@ public class PageController {
     @GetMapping(value = "/join", produces = MediaType.TEXT_HTML_VALUE)
     public String join() {
         return "service/join";
+    }
+
+    @GetMapping(value = "/login", produces = MediaType.TEXT_HTML_VALUE)
+    public String login() {
+        return "service/login";
     }
 }

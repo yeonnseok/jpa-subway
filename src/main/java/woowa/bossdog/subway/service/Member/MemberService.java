@@ -4,10 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import woowa.bossdog.subway.domain.Member;
+import woowa.bossdog.subway.infra.JwtTokenProvider;
 import woowa.bossdog.subway.repository.MemberRepository;
-import woowa.bossdog.subway.service.Member.dto.MemberRequest;
-import woowa.bossdog.subway.service.Member.dto.MemberResponse;
-import woowa.bossdog.subway.service.Member.dto.UpdateMemberRequest;
+import woowa.bossdog.subway.service.Member.dto.*;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -18,6 +17,7 @@ import java.util.NoSuchElementException;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Transactional
     public MemberResponse createMember(final MemberRequest request) {
@@ -49,5 +49,13 @@ public class MemberService {
 
     public Member findMemberByEmail(final String email) {
         return memberRepository.findByEmail(email);
+    }
+
+    public String createToken(final LoginRequest request) {
+        Member member = findMemberByEmail(request.getEmail());
+        if (!member.checkPassword(request.getPassword())) {
+            throw new WrongPasswordException();
+        }
+        return jwtTokenProvider.createToken(request.getEmail());
     }
 }

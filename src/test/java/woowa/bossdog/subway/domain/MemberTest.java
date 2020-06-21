@@ -23,4 +23,17 @@ class MemberTest {
         assertThat(member.getPassword()).isEqualTo("changedPassword");
     }
 
+    @DisplayName("비밀번호 확인")
+    @Test
+    void checkPassword() {
+        // given
+        Member member = new Member(111L, "test@test.com", "bossdog", "test");
+
+        // when
+        final boolean result = member.checkPassword("test");
+
+        // then
+        assertThat(result).isTrue();
+    }
+
 }

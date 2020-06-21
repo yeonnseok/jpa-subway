@@ -8,7 +8,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import woowa.bossdog.subway.domain.Member;
+import woowa.bossdog.subway.infra.JwtTokenProvider;
 import woowa.bossdog.subway.repository.MemberRepository;
+import woowa.bossdog.subway.service.Member.dto.LoginRequest;
 import woowa.bossdog.subway.service.Member.dto.MemberRequest;
 import woowa.bossdog.subway.service.Member.dto.MemberResponse;
 import woowa.bossdog.subway.service.Member.dto.UpdateMemberRequest;
@@ -17,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -28,14 +31,15 @@ class MemberServiceTest {
 
     private MemberService memberService;
 
-    @Mock
-    private MemberRepository memberRepository;
+    @Mock private MemberRepository memberRepository;
+
+    @Mock private JwtTokenProvider jwtTokenProvider;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        memberService = new MemberService(memberRepository);
+        memberService = new MemberService(memberRepository, jwtTokenProvider);
     }
 
     @DisplayName("회원 생성")
@@ -121,6 +125,52 @@ class MemberServiceTest {
         // then
         verify(memberRepository).deleteById(eq(111L));
 
+    }
+
+    @DisplayName("메일로 회원 조회")
+    @Test
+    void findMemberByEmail() {
+        // given
+        final Member member = new Member(111L, "test@test.com", "bossdog", "test");
+        given(memberRepository.findByEmail(any())).willReturn(member);
+
+        // when
+        final Member findMember = memberService.findMemberByEmail(member.getEmail());
+
+        // then
+        assertThat(findMember.getId()).isEqualTo(member.getId());
+        assertThat(findMember.getEmail()).isEqualTo(member.getEmail());
+        assertThat(findMember.getName()).isEqualTo(member.getName());
+        assertThat(findMember.getPassword()).isEqualTo(member.getPassword());
+
+    }
+
+    @DisplayName("로그인 실패 - 비밀번호 틀릴 경우")
+    @Test
+    void loginFail() {
+        final Member member = new Member(111L, "test@test.com", "bossdog", "test");
+        given(memberRepository.findByEmail(any())).willReturn(member);
+
+        assertThatThrownBy(() -> {
+            LoginRequest request = new LoginRequest("test@test.com", "wrong");
+            memberService.createToken(request);
+        }).isInstanceOf(WrongPasswordException.class);
+    }
+
+    @DisplayName("로그인 - 토큰 생성")
+    @Test
+    void createToken() {
+        // given
+        final Member member = new Member(111L, "test@test.com", "bossdog", "test");
+        given(memberRepository.findByEmail(any())).willReturn(member);
+        given(jwtTokenProvider.createToken(any())).willReturn("ACCESS_TOKEN");
+
+        // when
+        LoginRequest request = new LoginRequest("test@test.com", "test");
+        final String token = memberService.createToken(request);
+
+        // then
+        assertThat(token).isEqualTo("ACCESS_TOKEN");
     }
 
 }

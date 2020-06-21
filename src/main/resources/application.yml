@@ -25,7 +25,10 @@ handlebars:
   suffix: .html
   cache: false
 
+
+
 ---
+
 
 spring:
   profiles: test
